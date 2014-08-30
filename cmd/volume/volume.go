@@ -1,3 +1,5 @@
+// The volume command lets you get or set the volume of ALSA sound outputs.
+// This command is especially targeted for use on a Raspberry Pi.
 package main
 
 import (
