@@ -1,4 +1,4 @@
-// The volume package lets you control the volume of ALSA sound outputs.
+// Package volume lets you control the volume of ALSA sound outputs.
 // This package specifically targets the Raspberry Pi.
 package volume
 
