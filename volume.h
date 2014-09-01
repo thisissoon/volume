@@ -1,4 +1,4 @@
 
-int getVolume();
-int setVolume(int percentage);
+int getVolume(char *card);
+int setVolume(char *card, int percentage);
 
