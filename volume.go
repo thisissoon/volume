@@ -13,16 +13,18 @@ import (
 )
 
 // SetVolume sets the volume of all sound outputs.
-func SetVolume(card string, vol int) {
+func SetVolume(card string, mixer string, vol int) {
 	s := C.CString(card)
-	C.setVolume(s, C.int(vol))
+	m := C.CString(mixer)
+	C.setVolume(s, C.int(vol), m)
 	C.free(unsafe.Pointer(s))
 }
 
 // GetVolume returns the volume of the first sounds output found.
-func GetVolume(card string) (vol int, err error) {
+func GetVolume(card string, mixer string) (vol int, err error) {
 	s := C.CString(card)
-	vol = int(C.getVolume(s))
+	m := C.CString(mixer)
+	vol = int(C.getVolume(s, m))
 	C.free(unsafe.Pointer(s))
 	if vol < 0 {
 		err = errors.New("Unable to get volume.")

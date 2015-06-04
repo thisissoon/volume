@@ -8,7 +8,7 @@ extern "C" {
 #include "volume.h"
 }
 
-snd_mixer_elem_t *getElement(snd_mixer_t *handle, const char *card) {
+snd_mixer_elem_t *getElement(snd_mixer_t *handle, const char *card, const char *mixer) {
   int err = 0;
 
   if ((err = snd_mixer_attach(handle, card)) < 0) {
@@ -28,8 +28,8 @@ snd_mixer_elem_t *getElement(snd_mixer_t *handle, const char *card) {
 
   snd_mixer_selem_id_t *sid;
   snd_mixer_selem_id_alloca(&sid);
-  snd_mixer_selem_id_set_name(sid, "PCM");
-  
+  snd_mixer_selem_id_set_name(sid, mixer);
+
   snd_mixer_elem_t *element;
   if (!(element = snd_mixer_find_selem(handle, sid))) {
     fprintf(stderr, "Unable to find simple control '%s',%i\n",
@@ -41,8 +41,8 @@ snd_mixer_elem_t *getElement(snd_mixer_t *handle, const char *card) {
   return element;
 }
 
-bool setVolumeForHandle(snd_mixer_t *handle, const char *card, int percentage) {
-  snd_mixer_elem_t *element = getElement(handle, card);
+bool setVolumeForHandle(snd_mixer_t *handle, const char *card, int percentage, const char *mixer) {
+  snd_mixer_elem_t *element = getElement(handle, card, mixer);
   if (element == NULL) {
     fprintf(stderr, "Unable to get element.");
     return false;
@@ -75,8 +75,8 @@ bool setVolumeForHandle(snd_mixer_t *handle, const char *card, int percentage) {
   return true;
 }
 
-bool getVolumeForHandle(snd_mixer_t *handle, const char *card, int *percentage) {
-  snd_mixer_elem_t *element = getElement(handle, card);
+bool getVolumeForHandle(snd_mixer_t *handle, const char *card, int *percentage, const char *mixer) {
+  snd_mixer_elem_t *element = getElement(handle, card, mixer);
   if (element == NULL) {
     fprintf(stderr, "Unable to get element.");
     return false;
@@ -114,7 +114,7 @@ bool getVolumeForHandle(snd_mixer_t *handle, const char *card, int *percentage) 
   return false;
 }
 
-int setVolume(char *card, int percentage) {
+int setVolume(char *card, int percentage, char *mixer) {
   snd_mixer_t *handle = NULL;
 
   int err = 0;
@@ -123,13 +123,13 @@ int setVolume(char *card, int percentage) {
     return false;
   }
 
-  bool success = setVolumeForHandle(handle, card, percentage);
+  bool success = setVolumeForHandle(handle, card, percentage, mixer);
 
   snd_mixer_close(handle);
   return success ? 1 : 0;
 }
 
-int getVolume(char *card) {
+int getVolume(char *card, char *mixer) {
   snd_mixer_t *handle = NULL;
 
   int err = 0;
@@ -139,7 +139,7 @@ int getVolume(char *card) {
   }
 
   int percentage = -1;
-  getVolumeForHandle(handle, card, &percentage);
+  getVolumeForHandle(handle, card, &percentage, mixer);
 
   snd_mixer_close(handle);
   return percentage;
